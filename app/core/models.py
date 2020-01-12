@@ -1,12 +1,13 @@
 from django.db import models
-from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, \
-                                        PermissionsMixin
+from django.contrib.auth.models import AbstractBaseUser, BaseUserManager
+# from django.contrib.auth.models import PermissionsMixin
 
 # Create your models here.
 
+
 class UserManager(BaseUserManager):
     """the Manager class"""
-    
+
     def create_user(self, email, password=None, **extra_fields):
         """Create and save a new user"""
 
@@ -18,6 +19,15 @@ class UserManager(BaseUserManager):
             **extra_fields
         )
         user.set_password(password)
+        user.save(using=self._db)
+        return user
+
+    def create_superuser(self, email, password):
+        """Create and save a new super user"""
+
+        user = self.create_user(email=email, password=password)
+        user.is_superuser = True
+        user.is_staff = True
         user.save(using=self._db)
         return user
 
@@ -36,7 +46,3 @@ class User(AbstractBaseUser):
 
     def __str__(self):
         return self.email
-    
-
-    
-
